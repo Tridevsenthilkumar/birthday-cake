@@ -123,12 +123,13 @@ body {
   border-bottom-right-radius: 40px;
 }
 
+/* 🎂 CANDLE CHANGES */
 .candle {
   background-color: #7B020B;
   width: 12px;
-  height: 35px;
+  height: 30px; /* Reduced height */
   border-radius: 6px/3px;
-  top: -20px;
+  top: -25px; /* Moved up */
   left: 50%;
   margin-left: -8px;
   z-index: 10;
@@ -152,9 +153,9 @@ body {
   position: absolute;
   background-color: orange;
   width: 10px;
-  height: 25px;
+  height: 20px; /* Reduced height */
   border-radius: 8px 8px 8px 8px/20px 20px 8px 8px;
-  top: -34px;
+  top: -30px; /* Moved up relative to new candle top */
   left: 50%;
   margin-left: -7.5px;
   z-index: 10;
@@ -184,4 +185,39 @@ body {
     transform: skewX(5deg);
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.5), 0 0 20px rgba(255, 165, 0, 0.5), 0 0 60px rgba(255, 165, 0, 0.5), 0 0 80px rgba(255, 165, 0, 0.5);
   }
+}
+
+/* 💌 NEW MESSAGE STYLES */
+#message-container {
+    position: absolute;
+    top: 70%; /* Position below the cake */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    color: #F0E4D0; /* Light color for visibility on dark background */
+    background-color: #AD030F; /* Red background for contrast */
+    padding: 15px 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    opacity: 0; /* Starts invisible */
+    transition: opacity 2s ease-in-out;
+    max-width: 80%;
+    line-height: 1.4;
+}
+
+#message-container.show {
+    opacity: 1; /* Becomes visible */
+}
+
+#message-container p {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+#message-container span {
+    display: block;
+    font-size: 18px;
+    margin-top: 5px;
 }
