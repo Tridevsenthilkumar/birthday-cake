@@ -1,0 +1,38 @@
+# 🎂 Interactive Birthday Cake Project 🎉
+
+## Overview
+
+This Interactive Birthday Cake 🍰 project is a delightful web-based application designed for a special 18th birthday celebration. Users can interactively add candles 🕯️ to a birthday cake and blow them out using their microphone, combining HTML, CSS, and JavaScript for a charming user experience.
+
+## Features
+
+- **Initial Candle Count:** The cake automatically loads with **18** candles on the very first visit, ensuring the correct count for the birthday.
+- **Persistence:** The state of the candles (blown out or lit) is saved in the user's browser (Local Storage) so she can return later to see the cake as she left it.
+- **Microphone Integration:** Blow into your mic to extinguish candles 🎤.
+- **Interactive Cake:** Click to add more candles 🕯️ (these will also persist).
+- **Candle Count:** Watch the candle count change dynamically 🔢.
+
+## Accessing the Project
+
+To experience the Interactive Birthday Cake, you will need to host your files on a service like GitHub Pages or Netlify.
+
+## How to Use
+
+1.  Go to the live project link (once you have hosted the files).
+2.  The cake will appear with 18 lit candles.
+3.  **Allow microphone access** when prompted.
+4.  Blow into your microphone (a strong, steady breath) to blow out the candles.
+
+## Technologies
+
+- HTML
+- CSS
+- JavaScript
+
+## Credits
+
+The original cake design was adapted from Fazlur Rahman's creation on CodePen.
+
+## License
+
+This project is released under the MIT License.
