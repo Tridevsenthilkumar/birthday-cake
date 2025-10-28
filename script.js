@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const cake = document.querySelector(".cake");
   const candleCountDisplay = document.getElementById("candleCount");
+  const messageContainer = document.getElementById("message-container"); 
+  
   let candles = [];
   let audioContext;
   let analyser;
@@ -10,75 +12,89 @@ document.addEventListener("DOMContentLoaded", function () {
   const CANDLE_STORAGE_KEY = "virtualCakeCandles";
   const INITIAL_CANDLE_COUNT = 18; // Set for the 18th birthday!
 
+  // --- HEART SHAPE COORDINATES ---
+  // These 18 coordinate pairs (left, top) form a heart shape on the 250px wide cake.
+  const HEART_COORDINATES = [
+    // Top Curves
+    [90, -15], [110, -25], [130, -25], [150, -15],
+    // Sides of the 'V'
+    [70, 0], [170, 0], 
+    [50, 15], [190, 15],
+    [40, 30], [200, 30],
+    // Point of the Heart
+    [125, 60], 
+    // Mid-Sides (forming the central dip)
+    [125, -15], 
+    // Additional points for a fuller shape
+    [100, 5], [150, 5],
+    [80, 20], [170, 20],
+    [125, 40],
+    [140, 45]
+  ];
+
   // --- HELPER FUNCTIONS ---
 
-  /**
-   * Loads candle data from Local Storage and draws them.
-   * If storage is empty, it calls setInitialCandles(18).
-   */
   function loadCandles() {
     const storedCandles = localStorage.getItem(CANDLE_STORAGE_KEY);
     
     if (storedCandles) {
       const positions = JSON.parse(storedCandles);
       
-      // If data was found, draw the saved candles
       if (positions.length > 0) {
           positions.forEach(pos => {
-            // false: do not save again, just draw
             addCandle(pos.left, pos.top, false); 
           });
       } else {
-          // If storage contained an empty array, set the initial candles
           setInitialCandles(INITIAL_CANDLE_COUNT);
       }
     } else {
-        // If storage was completely empty (true first visit), set the initial 18
         setInitialCandles(INITIAL_CANDLE_COUNT);
     }
+    updateMessageVisibility();
   }
 
   /**
-   * Generates initial candles in fixed random positions and saves them.
-   * This is only called on the very first load for a new user.
+   * Generates initial candles using the fixed HEART_COORDINATES array.
    */
   function setInitialCandles(count) {
-      for (let i = 0; i < count; i++) {
-          // Generate semi-random positions within the cake bounds (left: 40px to 210px)
-          const left = 40 + Math.random() * 170; 
-          // Generate semi-random positions near the top of the icing (top: -10px to 10px)
-          const top = -10 + Math.random() * 20; 
-          
-          // Add the candle and save it (true)
+      // Loop through the fixed heart coordinates
+      HEART_COORDINATES.forEach(coords => {
+          const [left, top] = coords;
           addCandle(left, top, true);
-      }
+      });
+      console.log(`Set ${count} initial candles in a heart shape!`);
   }
 
-  /**
-   * Saves the current positions of all candles to Local Storage.
-   */
   function saveCandles() {
-    // 1. Map the current candle elements to an array of position objects
     const positionsToSave = candles.map(candle => ({
-      // Get the 'left' and 'top' styles, convert them to numbers
       left: parseFloat(candle.style.left),
       top: parseFloat(candle.style.top)
     }));
-    
-    // 2. Convert the array to a JSON string and store it
     localStorage.setItem(CANDLE_STORAGE_KEY, JSON.stringify(positionsToSave));
   }
   
-  // --- CORE FUNCTIONS ---
+  function updateMessageVisibility() {
+      const activeCandles = candles.filter(
+          (candle) => !candle.classList.contains("out")
+      ).length;
+
+      // If all candles are out (count is 0), show the message
+      if (candles.length > 0 && activeCandles === 0) {
+          messageContainer.classList.add("show");
+      } else {
+          messageContainer.classList.remove("show");
+      }
+  }
 
   function updateCandleCount() {
     const activeCandles = candles.filter(
       (candle) => !candle.classList.contains("out")
     ).length;
     candleCountDisplay.textContent = activeCandles;
+    
+    updateMessageVisibility(); 
   }
 
-  // Modified to include a 'shouldSave' parameter
   function addCandle(left, top, shouldSave = true) {
     const candle = document.createElement("div");
     candle.className = "candle";
@@ -93,19 +109,15 @@ document.addEventListener("DOMContentLoaded", function () {
     candles.push(candle);
     updateCandleCount();
     
-    // Save the entire candle list to storage if instructed
     if (shouldSave) {
         saveCandles();
     }
   }
 
-  // Allow clicking to add more candles, which also saves them
   cake.addEventListener("click", function (event) {
     const rect = cake.getBoundingClientRect();
     const left = event.clientX - rect.left;
     const top = event.clientY - rect.top;
-    
-    // true: adds a candle AND saves the updated list
     addCandle(left, top, true); 
   });
 
@@ -128,7 +140,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (isBlowing()) {
       candles.forEach((candle) => {
-        // Only blow out a candle with a 50% chance when the user is blowing
         if (!candle.classList.contains("out") && Math.random() > 0.5) {
           candle.classList.add("out");
           blownOut++;
@@ -136,7 +147,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    // Update the count if any candles were blown out
     if (blownOut > 0) {
       updateCandleCount();
     }
@@ -144,7 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // --- INITIALIZATION ---
   
-  // Load any previously saved candles or set the initial 18 if empty.
   loadCandles(); 
 
   if (navigator.mediaDevices.getUserMedia) {
@@ -156,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
         microphone = audioContext.createMediaStreamSource(stream);
         microphone.connect(analyser);
         analyser.fftSize = 256;
-        // Start checking for 'blow' sound every 200ms
         setInterval(blowOutCandles, 200);
       })
       .catch(function (err) {
